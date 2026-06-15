@@ -3,7 +3,14 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
+
+  server: {
+    host: '0.0.0.0',
+    allowedHosts: true
+  },
+
   preview: {
-    allowedHosts: ['academiccourseplanner-3.onrender.com']
+    host: '0.0.0.0',
+    allowedHosts: true
   }
 })
