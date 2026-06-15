@@ -1,0 +1,54 @@
+services:
+  - type: web
+    name: academic-planning-backend
+    runtime: docker
+    plan: free
+    rootDir: Backend/coreservices/coreservices
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /health
+    envVars:
+      - key: SPRING_DATASOURCE_URL
+        sync: false
+      - key: SPRING_DATASOURCE_USERNAME
+        sync: false
+      - key: SPRING_DATASOURCE_PASSWORD
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRATION_MS
+        value: 86400000
+      - key: MONGODB_URI
+        sync: false
+      - key: MONGODB_DATABASE
+        value: academic_planning_logs
+
+  - type: web
+    name: academic-planning-gateway
+    runtime: node
+    plan: free
+    rootDir: gateway-node
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: SPRING_BOOT_URL
+        sync: false
+      - key: CORS_ORIGIN
+        sync: false
+      - key: PROXY_TIMEOUT_MS
+        value: 15000
+
+  - type: web
+    name: academic-planning-frontend
+    runtime: static
+    plan: free
+    rootDir: Frontend/frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: ./dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_API_BASE_URL
+        sync: false
